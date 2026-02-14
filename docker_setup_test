@@ -1,0 +1,98 @@
+# 1. Update packages
+sudo apt update && sudo apt upgrade -y
+
+# 2. Install prerequisites
+sudo apt install -y ca-certificates curl gnupg
+
+# 3. Add Docker's official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+# 4. Add Docker repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# 5. Install Docker
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# 6. Add your user to the docker group (no sudo needed for docker commands)
+sudo usermod -aG docker $USER
+
+# 7. Apply group change (or log out and back in)
+newgrp docker
+
+# 8. Verify installation
+docker --version
+docker run hello-world
+
+
+docker run -d \
+  --name ollama \
+  -p 11434:11434 \
+  -v ollama_models:/root/.ollama \
+  --restart unless-stopped \
+  ollama/ollama:latest
+
+to enter inside the container:
+docker exec -it ollama /bin/sh
+
+to pull the models
+ollama pull hf.co/bartowski/Meta-Llama-3-8B-Instruct-GGUF
+ollama pull llama3
+
+to run the model inside the container
+ollama run llama3 
+
+
+
+
+curl http://localhost:11434/api/generate \
+  -d '{"model":"llama3","prompt":"Why is the sky blue?"}'
+  
+curl --max-time 300 http://localhost:11434/api/generate \
+  -d '{"model":"llama3","prompt":"write a python program to swap numbers","stream":false}' 
+
+
+
+
+
+Use Case	Input	Output
+Image recognition	Pixels	"Cat" or "Dog"
+ChatGPT / LLMs	Text tokens	Next word prediction
+Speech recognition	Audio waveform	Transcribed text
+Self-driving cars	Camera + sensors	Steering decisions
+
+
+Human Brain	GPT-4 (largest AI)
+Connections/Parameters	~100 trillion (100T)	~1.8 trillion (1.8T)
+Processing units	~86 billion neurons	-
+Power consumption	~20 watts	Thousands of GPUs, megawatts
+Training time	~20 years of life experience	Weeks on supercomputers
+Weight	~1.4 kg	Hundreds of servers
+
+
+
+curl -X POST http://34.134.82.43/predict \
+  -H "Content-Type: application/json" \
+  -d '{"features": [5.1, 3.5, 1.4, 0.2]}'
+
+
+curl -X POST http://34.134.82.43/predict \
+  -H "Content-Type: application/json" \
+  -d '{"features": [6.0, 2.7, 5.1, 1.6]}'
+
+
+curl -X POST http://34.134.82.43/predict \
+  -H "Content-Type: application/json" \
+  -d '{"features": [7.2, 3.0, 5.8, 1.6]}'
+  
+  
+curl -X POST http://34.134.82.43/predict   -H "Content-Type: application/json"   -d '{"features": [8.0,8.0,9.0,9.0]}'
+  
+  
+{"confidence":0.93,"predicted_class":"rose","prediction":2,"probabilities":{"irisblueflag":0.03,"jasmin":0.04,"rose":0.93,"setosa":0.0,"versicolor":0.0},"timestamp":"2026-02-14T13:12:42.476997"}
+  
